@@ -39,13 +39,7 @@ data ITPEnv t = ITPEnv
   , n_0 :: Integer
   }
 
--- itp :: forall m t . ()
-  -- => Num t
-  -- => MonadReader m
-  -- => EnvType m ~ ReaderT (ITPEnv t) m ()
-  -- => MonadState m
-  -- => StateType m ~ StateT (ITP t) m ()
-  -- => m ()
+{-# ANN itp ("HLint: ignore Redundant multi-way if" :: String) #-}
 itp :: forall m t . ()
   => Monad m -- m ~ ST s
   => MonadIO m
@@ -84,68 +78,36 @@ itp = do
         modify \s -> s { delta = kappa_1 * (b - a) ** kappa_2 }
         -- delta <- gets delta
         ITP {..} <- get
-        -- liftIO . putStrLn $ "delta = " <> show delta
         -- Interpolation
         let x_f = (f_b * a - f_a * b) / (f_b - f_a)
         -- Truncation
         modify \s -> s { sigma = (x_half - x_f) `compare` 0 }
         -- sigma <- gets sigma
         ITP {..} <- get
-        -- liftIO $ print (LT, x_f + sgn sigma * delta, x_half)
-        {- liftIO . putStr $ unlines
-          [ "x_half = " <> show x_half
-          , "x_f = " <> show x_f
-          , "x_t | delta <= abs (x_half - x_f) = "
-          , "    = " <> show (x_f + sgn sigma * delta)
-          , "    | otherwise"
-          , "    = " <> show x_half ] -}
-        -- liftIO $ print (LT, delta, abs (x_half - x_f), sigma)
-        {- liftIO . putStr $ unlines
-          [ "delta = " <> show delta
-          , "abs (x_half - x_f) = " <> show (abs (x_half - x_f))
-          , "sigma = " <> show sigma
-          , "if  | " <> show delta <> " <= " <> show (abs (x_half - x_f))
-          , "    -> x_t = " <> show (x_f + sgn sigma * delta)
-          , "    | otherwise"
-          , "    -> x_t = " <> show x_half ] -}
-        {-# HLINT ignore "Redundant multi-way if" #-}
         if  | delta <= abs (x_half - x_f)
-            -> do modify \s -> s { x_t = x_f + sgn sigma * delta }
-                  -- liftIO $ putStrLn "secant branch"
+            -> modify \s -> s { x_t = x_f + sgn sigma * delta }
             | otherwise
-            -> do modify \s -> s { x_t = x_half }
-                  -- liftIO $ putStrLn "bisect branch"
+            -> modify \s -> s { x_t = x_half }
         -- x_t <- gets x_t
         ITP {..} <- get
-        -- liftIO . putStrLn $ "x_t = " <> show x_t
         -- Projection
-        -- liftIO $ print (LT, r, abs (x_t - x_half))
         let x_ITP | abs (x_t - x_half) <= r
                   = x_t
                   | otherwise
                   = x_half - sgn sigma * r
         -- Updating Interval
             f_ITP = f x_ITP
-        -- liftIO $ print (EQ, x_t, x_half, x_half - sgn sigma, x_ITP, f_ITP)
         case f_ITP `compare` 0 of
-          EQ -> do modify \s -> s { a = x_ITP, f_a = f_ITP
-                                  , b = x_ITP, f_b = f_ITP }
-                   -- liftIO . putStrLn $ "f_ITP == " <> show f_ITP <> " " <> show EQ
+          EQ -> modify \s -> s { a = x_ITP, f_a = f_ITP
+                               , b = x_ITP, f_b = f_ITP }
           o  | o == sigma_a
-             -> do modify \s -> s { a = x_ITP, f_a = f_ITP }
-                   -- liftIO . putStrLn $ "f_ITP == " <> show f_ITP <> " " <> show o
+             -> modify \s -> s { a = x_ITP, f_a = f_ITP }
              | o == sigma_b
-             -> do modify \s -> s { b = x_ITP, f_b = f_ITP }
-                   -- liftIO . putStrLn $ "f_ITP == " <> show f_ITP <> " " <> show o
+             -> modify \s -> s { b = x_ITP, f_b = f_ITP }
           _ -> error "error"
         modify \s -> s { j = j + 1 }
         -- j <- gets j
         ITP {..} <- get
-        {- liftIO . putStr $ unlines
-          [ "b - a = " <> show (b - a)
-          , "2 * epsilon = " <> show (2 * epsilon)
-          , "j = " <> show j
-          , "n_max = " <> show n_max ] -}
         pure $ (b - a) > 2 * epsilon && j < n_max
   while loop
 \end{code}
