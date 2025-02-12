@@ -1,0 +1,64 @@
+cabal-version:   3.8
+name:            itp
+version:         0.1
+build-type:      Simple
+
+category:        Devel
+synopsis:        ITP root solving
+description:     robust root solver
+license:         MIT
+author:          Nadia Chambers <nadia.chambers@iohk.io>
+maintainer:      Nadia Chambers <nadia.chambers@iohk.io>
+
+common common-build-parameters
+  default-language: GHC2024
+  default-extensions:
+    AllowAmbiguousTypes
+    ApplicativeDo
+    BlockArguments
+    ConstrainedClassMethods
+    DataKinds
+    FlexibleContexts
+    FlexibleInstances
+    GADTs
+    LambdaCase
+    MultiWayIf
+    NamedFieldPuns
+    NoMonomorphismRestriction
+    -- NoMonoLocalBinds
+    -- NPlusKPatterns
+    OverloadedLabels
+    OverloadedLists
+    OverloadedStrings
+    PackageImports
+    PartialTypeSignatures
+    PatternSynonyms
+    PolyKinds
+    QuasiQuotes
+    RankNTypes
+    RecordWildCards
+    ScopedTypeVariables
+    TemplateHaskell
+    TemplateHaskellQuotes
+    TupleSections
+    TypeApplications
+    TypeFamilies
+    TypeFamilyDependencies
+    TypeOperators
+    TypeSynonymInstances
+    ViewPatterns
+
+  ghc-options:
+    -Wall
+    -Wcompat
+    -Wno-name-shadowing
+
+library
+  import: common-build-parameters
+  hs-source-dirs:  src
+  exposed-modules: Numeric.ITP
+  build-depends:
+      base
+    , containers
+    , monads-tf
+    , transformers

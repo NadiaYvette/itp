@@ -1,0 +1,18 @@
+-- allow-newer:
+    -- algebra
+  -- , base
+  -- , containers
+  -- , deepseq
+  -- , equational-reasoning
+  -- , ghc
+  -- , hashtables
+  -- , lens
+  -- , ListLike
+  -- , mtl
+  -- , peggy
+  -- , pretty
+  -- , singletons
+  -- , template-haskell
+  -- , transformers
+  -- , type-natural
+packages: ./
