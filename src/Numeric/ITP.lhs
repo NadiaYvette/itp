@@ -67,20 +67,18 @@ data ITPEnv t = ITPEnv
 %endif
 \begin{code}
 itp :: forall m t . (Monad m, Ord t, RealFloat t, Show t)
-  => RWST (ITPEnv t) [ITP t] (ITP t) m ()
+  => RWST (ITPEnv t) () (ITP t) m ()
 itp = do
   ITPEnv {..} <- ask
   ITP {..} <- get
   modify \s -> s { k = 0 }
   let n_half :: Integer = ceiling (logBase 2 (frac (b - a) (2 * epsilon)))
       n_max  :: Integer = n_half + n_0
-      loop :: RWST (ITPEnv t) [ITP t] (ITP t) m Bool
+      loop :: RWST (ITPEnv t) () (ITP t) m Bool
       loop = do
 \end{code}
         Calculating parameters
 \begin{spec}
-        itp <- get
-        tell [itp]
         x_half <- gets x_half
 \end{spec}
 \begin{code}
