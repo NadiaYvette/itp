@@ -35,7 +35,14 @@
 %format fx = "{f(x_n)}"
 %format f'x = "{f'(x_n)}"
 %format f''x = "{f''(x_n)}"
+\usepackage[backend=bibtex]{biblatex}
 \usepackage{comment}
+\usepackage{url}
+\addbibresource{argyros.bib}
+\addbibresource{brent.bib}
+\addbibresource{itp.bib}
+\addbibresource{oliv.bib}
+\addbibresource{sikorski.bib}
 \begin{document}
 %if False
 \begin{code}
@@ -44,6 +51,13 @@ import                          Control.Monad
 import           "transformers" Control.Monad.Trans.RWS
 \end{code}
 %endif
+
+This implements the algorithm from \cite{itp}, in turn substantially
+derived from \cite{oliv:taka:itp}, which represents an improvement over
+\cite{brent:71}, whose use of inverse quadratic interpolation is somewhat
+idiosyncratic. It applies some of the ideas of \cite{argyros:19} to the
+secant method. The methods account for Sikorski's observations in
+\cite{sikorski:82}.
 
 \begin{code}
 data ITP t = ITP
@@ -178,4 +192,5 @@ while m = go where
     when b do go
 \end{code}
 %endif
+\printbibliography
 \end{document}
