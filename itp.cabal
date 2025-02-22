@@ -17,6 +17,7 @@ common common-build-parameters
     ApplicativeDo
     BlockArguments
     ConstrainedClassMethods
+    CPP
     DataKinds
     FlexibleContexts
     FlexibleInstances
