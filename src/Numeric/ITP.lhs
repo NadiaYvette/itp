@@ -51,7 +51,7 @@
 \section{Introduction}
 %if False
 \begin{code}
-module Numeric.ITP (itp) where
+module Numeric.ITP (ITP (..), ITPEnv (..), ITPLog, itp) where
 import                          Control.Monad
 import           "transformers" Control.Monad.Trans.RWS
 \end{code}
@@ -177,14 +177,17 @@ probe point is closer than |delta| to the midpoint.
         modify {-" \enspace "-} \s -> s { delta = kappa_1 * fpowPar (b - a) kappa_2 }
         ITP { x_half } <- get
         modify {-" \enspace "-} \s -> s { sigma = (x_half - x_f) `compare` 0 }
-        ITP { delta, sigma } <- get
+        ITP { delta, sigma, x_half } <- get
         if  | delta <= abs (x_half - x_f)
             -> modify {-" \enspace "-} \s -> s { x_t = x_f + sgn sigma * delta }
             | otherwise
             -> modify {-" \enspace "-} \s -> s { x_t = x_half }
 \end{code}
 \subsection{Projection}
-Here use is made of |r| defined according to \eqref{bounds:eqn}.
+Here use is made of |r| defined according to \eqref{bounds:eqn}. The
+basic concept is that the truncated probe point is used if within the
+bounds neeeded to satisfy the convergence rate. Otherwise, use the bound
+as the limit on how far to deviate from the midpoint.
 \begin{code}
         ITPEnv { f } <- ask
         ITP { k, sigma, x_t } <- get
@@ -196,6 +199,10 @@ Here use is made of |r| defined according to \eqref{bounds:eqn}.
             f_ITP = f x_ITP
 \end{code}
 \subsection{Updating Interval}
+While |x_ITP| is already decided to be a new bracketing interval
+endpoint, which of the two current bracketing interval endpoints to
+replace with it needs to be decided. The one with the matching sign is
+to be chosen.
 \begin{code}
         ITPEnv { sigma_a, sigma_b } <- ask
         case f_ITP `compare` 0 of
