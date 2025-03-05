@@ -223,12 +223,28 @@ The algorithm seems to fail to distinguish a $\delta$ such that
 $\left\vert\tilde{x}-x^*\right\vert < \delta$ from a residual bound
 $\varepsilon$ such that
 $\left\vert f\left(\tilde{x}\right)\right\vert < \varepsilon$. In fact,
-no explicit consideration of the magnitude of the residual occurs.
+no explicit consideration of the magnitude of the residual occurs. What
+ever happened to traditional $\varepsilon-\delta$ finding $x^*$ and
+$\delta$ so that $(\forall x)\left\vert x-x^*\right\vert<\delta$ one has
+that $\left\vert f(x)-f^*\right\vert<\varepsilon$, where here $f^*=0$?
 \\
 The more conventional notions of the rate $\mu$ and order $q$ of
 convergence would be more helpful to use as parameters, as noted in the
 introduction.
-
+\\
+I'm also somewhat suspicious of whether this would actually have faster
+convergence than traditional fallback from Newton/Halley/etc. whenever
+they might fall outside a bracketing interval or otherwise determining
+the smallest possible bracketing interval after sampling based on a few
+different algorithms e.g. bisection, secant, Newton, Halley, and
+discarding whatever points they might generate that are ineligible by
+dint of falling outside the current bracketing interval. Such things
+could be a little too naïve for multiple roots, but it's not apparent
+that ITP would maintain superlinear convergence to multiple roots
+either. \cite{oliv:taka:itp} in its numerical experiments doesn't compare
+it to anything of the kind, just Matlab's {\tt fzero}, secant, Illinois,
+plain regula falsi, and Ridder's. So there's a good chance such things
+could actually win.
 %if False
 \begin{code}
 frac :: Fractional t => t -> t -> t
